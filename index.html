@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendee Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .remove-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .remove-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+    <script>
+        function addAttendee() {
+            var attendeeInput = document.getElementById('attendee');
+            var attendeeList = document.getElementById('attendeeList');
+            var attendee = attendeeInput.value;
+            if (attendee !== '') {
+                var listItem = document.createElement('li');
+                listItem.appendChild(document.createTextNode(attendee));
+                var removeButton = document.createElement('button');
+                removeButton.classList.add('remove-button');
+                removeButton.appendChild(document.createTextNode('Remove'));
+                removeButton.addEventListener('click', function() {
+                    listItem.parentNode.removeChild(listItem);
+                });
+                listItem.appendChild(removeButton);
+                attendeeList.appendChild(listItem);
+                attendeeInput.value = '';
+            }
+        }
+
+        function generateFile() {
+            var eventName = document.getElementById('eventName').value;
+            var eventDate = document.getElementById('eventDate').value;
+            var attendeeItems = document.getElementById('attendeeList').getElementsByTagName('li');
+            var attendees = [];
+            for (var i = 0; i < attendeeItems.length; i++) {
+                attendees.push(attendeeItems[i].textContent.replace('Remove', ''));
+            }
+
+            var fileName = eventDate + '_' + eventName + '.txt';
+
+            var content = 'Event Name: ' + eventName + '\n';
+            content += 'Event Date: ' + eventDate + '\n';
+            content += 'Attendees:\n' + attendees.join('\n');
+
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', fileName);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</head>
+<body>
+    <h1>Attendee Form</h1>
+    <form>
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" required><br>
+        <label for="eventDate">Event Date:</label>
+        <input type="date" id="eventDate" required><br>
+        <label for="attendee">Attendee Name:</label>
+        <input type="text" id="attendee" required>
+        <button type="button" onclick="addAttendee()">Add Attendee</button><br>
+        <ul id="attendeeList"></ul><br>
+        <button type="button" onclick="generateFile()">Generate Attendee List</button>
+    </form>
+</body>
+</html>
